@@ -14,6 +14,12 @@ public class MainActivity extends AppCompatActivity {
     private CustomEditText customField;
     private EditText textField;
 
+    private ScanCoder scanCoder = null;
+
+    public MainActivity(){
+        scanCoder = new ScanCoder();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         customField = (CustomEditText) findViewById(R.id.customField);
         textField = (EditText) findViewById(R.id.textField);
         textField.requestFocus();
-        textField.addTextChangedListener(new KeyCatcher(textField));
+        KeyCatcher keyCatcher = new KeyCatcher(textField);
+        keyCatcher.scanCoder = scanCoder;
+        textField.addTextChangedListener(keyCatcher);
     }
 
 }

@@ -15,6 +15,8 @@ public class KeyCatcher implements TextWatcher {
     private long startTime;
     private HashMap<Long, Integer> data;
 
+    public ScanCoder scanCoder = null;
+
     public KeyCatcher(EditText subject) {
         textField = subject;
         startTime = System.currentTimeMillis();
@@ -29,6 +31,7 @@ public class KeyCatcher implements TextWatcher {
         if (charSequence.length() > 0) {
             int ascii = charSequence.charAt(charSequence.length()-1);
             Log.d("[KeyCatcher]", "ASCII: " + Integer.toString(ascii));
+            scanCoder.sendCode();
             data.put(System.currentTimeMillis(), ascii);
         } else {
             // Handle Backspaces
