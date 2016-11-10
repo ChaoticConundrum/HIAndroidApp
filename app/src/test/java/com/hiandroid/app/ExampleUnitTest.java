@@ -1,4 +1,4 @@
-package com.ethannjc.keyboardtest;
+package com.hiandroid.app;
 
 import org.junit.Test;
 

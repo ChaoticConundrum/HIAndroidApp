@@ -1,4 +1,4 @@
-package com.ethannjc.keyboardtest;
+package com.hiandroid.app;
 
 import android.content.Context;
 import android.util.AttributeSet;
