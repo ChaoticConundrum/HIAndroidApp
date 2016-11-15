@@ -23,6 +23,10 @@ public class ScanCoder {
         }
     }
 
+    byte asciiToScan(int ascii)}
+        
+    }
+
     public void sendCode(){
         if(hidDataStream == null)
             return;
@@ -30,6 +34,7 @@ public class ScanCoder {
 
         // Press keys
         bytes[2] = 0x04;
+        Log.d("[ScanCoder]", Arrays.toString(bytes));
         try {
             hidDataStream.write(bytes);
         } catch(IOException e){
@@ -38,6 +43,7 @@ public class ScanCoder {
 
         // Unpress keys
         Arrays.fill(bytes, (byte)0);
+        Log.d("[ScanCoder]", Arrays.toString(bytes));
         try {
             hidDataStream.write(bytes);
         } catch(IOException e){
