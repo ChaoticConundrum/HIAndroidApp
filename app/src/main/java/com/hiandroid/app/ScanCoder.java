@@ -11,43 +11,60 @@ import java.util.Arrays;
 
 public class ScanCoder {
 
-    private File hidFile;
-    private FileWriter writer;
-    private DataOutputStream hidDataStream = null;
+    private Process process = null;
+    private DataOutputStream cmdStream = null;
 
     public ScanCoder(){
         try {
-            hidDataStream = new DataOutputStream(new FileOutputStream("/dev/hidg0"));
-        } catch(IOException e){
-            Log.e("[ScanCoder]", "Failed to open char device for writing");
+            process = Runtime.getRuntime().exec("su");
+            cmdStream = new DataOutputStream(process.getOutputStream());
+        } catch(IOException e) {
+            Log.e("[ScanCoder]", "Failed to open su shell");
         }
     }
 
-    byte asciiToScan(int ascii)}
-        
+    // Returns 2 bytes
+    // The first byte contains modifier flags (shift only)
+    // The second byte is the scan code for the symbol
+    public static byte[] asciiToScan(int ascii){
+        byte scan[] = new byte[2];
+        if(ascii == 48){
+            // Zero
+            scan[0] = 0;
+            scan[1] = 39;
+        } else if(ascii >= 49 && ascii <= 57){
+            // Numbers
+            scan[0] = 0;
+            scan[1] = (byte) (ascii - 49 + 30);
+        } else if(ascii >= 65 && ascii <= 90) {
+            // Uppercase alphas
+            scan[0] = 0x02;
+            scan[1] = (byte)(ascii - 65 + 4);
+        } else if(ascii >= 97 && ascii <= 122) {
+            // Lowercase alphas
+            scan[0] = 0;
+            scan[1] = (byte) (ascii - 97 + 4);
+        } else {
+            // Unknown
+            Log.d("[ScanCoder]", "Unknown ASCII: " + ascii);
+        }
+        return scan;
     }
 
-    public void sendCode(){
-        if(hidDataStream == null)
+    public void sendCodes(byte[] codes){
+        if(cmdStream == null || codes == null)
             return;
-        byte bytes[] = new byte[8];
-
-        // Press keys
-        bytes[2] = 0x04;
-        Log.d("[ScanCoder]", Arrays.toString(bytes));
         try {
-            hidDataStream.write(bytes);
+            // Make report
+            String bystr = String.format(
+                    "\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x",
+                    codes[0], 0, codes[2], codes[3], codes[4], codes[5], codes[6], codes[7]);
+            //Log.d("[ScanCoder]", bystr);
+            // Write report
+            cmdStream.writeBytes("echo -n -e '" + bystr + "' > /dev/hidg0\n");
+            cmdStream.flush();
         } catch(IOException e){
-            Log.e("[ScanCoder]", "Failed to write char device");
-        }
-
-        // Unpress keys
-        Arrays.fill(bytes, (byte)0);
-        Log.d("[ScanCoder]", Arrays.toString(bytes));
-        try {
-            hidDataStream.write(bytes);
-        } catch(IOException e){
-            Log.e("[ScanCoder]", "Failed to write char device");
+            Log.e("[ScanCoder]", "Failed to write char device " + e.toString());
         }
     }
 }
