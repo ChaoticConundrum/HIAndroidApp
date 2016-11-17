@@ -11,13 +11,9 @@ public class KeyboardWriter {
     void setKey(int code, boolean press){
         byte bytes[] = new byte[8];
         if(press) {
-            byte codes[] = ScanCoder.asciiToScan(code);
-            // Modifiers
-            bytes[0] |= codes[0];
-            // Key
-            bytes[2] = codes[1];
+            scanCoder.sendCodes(ScanCoder.asciiToScan(code));
         }
-        scanCoder.sendCodes(bytes);
+
     }
 
     void startRecordMacro(int number){
