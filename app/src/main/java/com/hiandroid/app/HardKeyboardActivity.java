@@ -2,56 +2,91 @@ package com.hiandroid.app;
 
 import android.app.Activity;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.method.CharacterPickerDialog;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.RelativeLayout;
 
 public class HardKeyboardActivity extends Activity {
 
     private GridLayout keyboardGrid;
     private HardKey[] keys;
+    private boolean shift;
+    private Typeface textFont;
 
     public HardKeyboardActivity() { }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_hardkeyboard);
+
+        DisplayMetrics display = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(display);
+        int keyWidth = (display.widthPixels / 16);
+
+        //textFont = new Typeface();
 
         generateKeys();
 
         keyboardGrid = (GridLayout) findViewById(R.id.keyboardGrid);
         keyboardGrid.setColumnCount(16);
         keyboardGrid.setRowCount(6);
-        for (HardKey key : keys) {
+        keyboardGrid.setPadding(0,0,0,0);
+        keyboardGrid.setPaddingRelative(0,0,0,0);
+        for (final HardKey key : keys) {
             key.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         // Key pressed down
-
-                        return true;
+                        Log.d("[HardKeyboard]", key.currentText + " pressed");
+                        if (key.name1.equals("Shift")) {
+                            shift = true;
+                            for (HardKey key2 : keys) key2.updateKey();
+                        }
                     } else if (event.getAction() == MotionEvent.ACTION_UP) {
                         // Key released
-
-                        return true;
+                        Log.d("[HardKeyboard]", key.name1 + " released");
+                        if (key.name1.equals("Shift")) {
+                            shift = false;
+                            for (HardKey key2 : keys) key2.updateKey();
+                        }
+                        //return true;
                     }
                     return false;
                 }
             });
             key.setText(key.name1);
+            key.setPadding(0, 0, 0, 0);
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, key.width);
-            params.width = GridLayout.LayoutParams.MATCH_PARENT;
-            params.height = GridLayout.LayoutParams.MATCH_PARENT;
+            params.width = key.width * keyWidth;
+            params.height = keyWidth;
             key.setLayoutParams(params);
             keyboardGrid.addView(key);
         }
 
-        setContentView(R.layout.activity_main);
+        RelativeLayout frame = (RelativeLayout) findViewById(R.id.relLayout);
 
+        RelativeLayout.LayoutParams reparams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        reparams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        //frame.setLayoutParams(reparams);
+        //frame.setLayoutParams(reparams);
     }
+
 
     private void generateKeys() {
         HardKey[] init = {
@@ -120,7 +155,7 @@ public class HardKeyboardActivity extends Activity {
                 new HardKey("Enter", 2, 0),
                 new HardKey("Pg Up", 1, 0),
 
-                new HardKey("Shift", 1, 0),
+                new HardKey("Shift", 2, 0),
                 new HardKey("z", "Z", 1, 0),
                 new HardKey("x", "X", 1, 0),
                 new HardKey("c", "C", 1, 0),
@@ -151,30 +186,59 @@ public class HardKeyboardActivity extends Activity {
     }
 
     private class HardKey extends Button {
-        public String name1, name2;
-        public int width, identifier;
+        private String name1, name2, currentText;
+        private int width, identifier;
+        private Paint paint;
 
-        // Constructor for a key with no second purpose
-        // identifier is just a placeholder value to determine what to send to the Keyboard Writer
         public HardKey(String name, int width, int identifier) {
-            this(name, "", width, identifier);
+            this(name, name, width, identifier);
         }
 
-        // Constructor for dual purpose keys that will be toggled by shift
-        // If the identifier is the same,
         public HardKey(String name1, String name2, int width, int identifier) {
             super(HardKeyboardActivity.this);
             this.name1 = name1;
             this.name2 = name2;
             this.width = width;
             this.identifier = identifier;
+            paint = new Paint();
+            currentText = name1;
+        }
+
+        public void updateKey() {
+            if (shift) {
+                if (currentText.equals(name1)) {
+                    setText(name2);
+                    currentText = name2;
+                }
+            } else if (currentText.equals(name2)) {
+                setText(name1);
+                currentText = name1;
+            }
         }
 
         @Override
         public void onDraw(Canvas canvas) {
             // Will draw the button to look more like a key
             // Will draw the text to reflect the state of shift
-            super.onDraw(canvas);
+            //super.onDraw(canvas);
+
+            paint.setColor(Color.parseColor("#232323"));
+            paint.setStrokeWidth(3);
+            paint.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(2,2, getWidth()-4, getHeight()-4, paint);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.parseColor((isPressed()) ?  "#ababab" : "#eaeaea"));
+            canvas.drawRect(5,5, getWidth()-7, getHeight()-7, paint);
+
+            paint.setColor(Color.parseColor("#232323"));
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setTextSize(36);
+
+            int xPos = (canvas.getWidth() / 2);
+            int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2)) ;
+
+            canvas.drawText(getText().toString(), xPos, yPos, paint);
+
         }
 
     }
