@@ -31,12 +31,15 @@ public class KeyCatcher implements TextWatcher {
         if (charSequence.length() > 0) {
             int ascii = charSequence.charAt(charSequence.length()-1);
             Log.d("[KeyCatcher]", "ASCII: " + Integer.toString(ascii));
-            keyboardWriter.setKey(ascii, true);
-            keyboardWriter.setKey(ascii, false);
             data.put(System.currentTimeMillis(), ascii);
+            keyboardWriter.setAsciiKey(ascii, true);
+            keyboardWriter.setAsciiKey(ascii, false);
         } else {
             // Handle Backspaces
+            Log.d("[KeyCatcher]", "Backspace");
             data.put(System.currentTimeMillis(), 8);
+            keyboardWriter.setKey(ScanCoder.Key.K_DEL, true);
+            keyboardWriter.setKey(ScanCoder.Key.K_DEL, false);
         }
     }
 

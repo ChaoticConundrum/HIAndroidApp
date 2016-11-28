@@ -11,7 +11,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.hiandroid.app.MainActivity">
+        <activity
+            android:name="com.hiandroid.app.SoftKeyboardActivity">
         </activity>
         <activity
             android:name="com.hiandroid.app.HardKeyboardActivity"
