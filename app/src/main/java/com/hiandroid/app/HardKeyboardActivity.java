@@ -132,7 +132,7 @@ public class HardKeyboardActivity extends Activity {
                 new HardKey("0", ")", 1, ScanCoder.Key.K_0),
                 new HardKey("-", "_", 1, ScanCoder.Key.K_DASH),
                 new HardKey("=", "+", 1, ScanCoder.Key.K_EQ_PLUS),
-                new HardKey("Backspace", 2, ScanCoder.Key.K_DEL),
+                new HardKey("Backspace", 2, ScanCoder.Key.K_BACKSP),
                 new HardKey("Home", 1,   ScanCoder.Key.K_HOME),
 
                 new HardKey("Tab", 2,    ScanCoder.Key.K_TAB),

@@ -52,7 +52,7 @@ public class ScanCoder {
 
         K_ENTER     (0x28, '\n'),
         K_ESC       (0x29, 0x1b),
-        K_DEL       (0x2a, 0x7a),
+        K_BACKSP    (0x2a, 0x08),
         K_TAB       (0x2b, '\t'),
         K_SPACE     (0x2c, ' '),
 
@@ -89,6 +89,7 @@ public class ScanCoder {
         K_INSERT    (0x49),
         K_HOME      (0x4a),
         K_PGUP      (0x4b),
+        K_DEL       (0x4c),
         K_END       (0x4d),
         K_PGDN      (0x4e),
 

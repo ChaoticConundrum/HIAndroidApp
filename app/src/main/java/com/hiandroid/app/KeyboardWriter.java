@@ -7,15 +7,17 @@ import java.util.HashSet;
 
 public class KeyboardWriter {
 
-    private ScanCoder scanCoder = null;
     private HashSet<ScanCoder.Key> pressed = null;
+    private ScanCoder scanCoder = null;
 
     public KeyboardWriter(){
-        scanCoder = new ScanCoder();
         pressed = new HashSet<ScanCoder.Key>();
+        scanCoder = new ScanCoder();
     }
 
     void setKey(ScanCoder.Key code, boolean press){
+        if(scanCoder == null)
+            return;
         if(press) {
             pressed.add(code);
         } else {
@@ -26,6 +28,8 @@ public class KeyboardWriter {
     }
 
     void setAsciiKey(int ascii, boolean press){
+        if(scanCoder == null)
+            return;
         if(press) {
             pressed.addAll(Arrays.asList(ScanCoder.Key.asciiScanCode(ascii)));
         } else {
