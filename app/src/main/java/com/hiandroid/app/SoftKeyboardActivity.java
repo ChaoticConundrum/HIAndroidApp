@@ -12,7 +12,6 @@ import android.widget.EditText;
 public class SoftKeyboardActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST = 1;
-    private CustomEditText customField;
     private EditText textField;
 
     private KeyCatcher keyCatcher = null;
@@ -26,7 +25,6 @@ public class SoftKeyboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_softkeyboard);
-        customField = (CustomEditText) findViewById(R.id.customField);
         textField = (EditText) findViewById(R.id.textField);
         textField.requestFocus();
         keyCatcher = new KeyCatcher(textField);
