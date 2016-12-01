@@ -2,14 +2,22 @@ package com.hiandroid.app;
 
 import android.os.AsyncTask;
 
-public class AsyncKeyInit extends AsyncTask<Void, Void, Void> {
-    @Override
-    protected Void doInBackground(Void... voids) {
-        return null;
+public class AsyncKeyInit extends AsyncTask<Void, Void, ScanCoder> {
+
+    private KeyboardWriter keyboardWriter = null;
+
+    public AsyncKeyInit(KeyboardWriter writer){
+        this.keyboardWriter = writer;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected ScanCoder doInBackground(Void... voids) {
+        return new ScanCoder();
+    }
+
+    @Override
+    protected void onPostExecute(ScanCoder scanCoder) {
+        super.onPostExecute(scanCoder);
+        keyboardWriter.setScanCoder(scanCoder);
     }
 }
