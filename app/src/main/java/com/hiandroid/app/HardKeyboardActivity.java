@@ -3,16 +3,10 @@ package com.hiandroid.app;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.method.CharacterPickerDialog;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +39,7 @@ public class HardKeyboardActivity extends Activity {
 
         //textFont = new Typeface();
 
+        shift = false;
         generateKeys();
 
         keyboardGrid = (GridLayout) findViewById(R.id.keyboardGrid);
@@ -52,15 +47,28 @@ public class HardKeyboardActivity extends Activity {
         keyboardGrid.setRowCount(6);
         keyboardGrid.setPadding(0,0,0,0);
         keyboardGrid.setPaddingRelative(0,0,0,0);
+
         for (final HardKey key : keys) {
+            //key.setText(key.lowername);
+            key.setPadding(0, 0, 0, 0);
+
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, key.width);
+            params.width = key.width * keyWidth;
+            params.height = keyWidth;
+            key.setLayoutParams(params);
+
             key.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         // Key pressed down
-                        Log.d("[HardKeyboard]", key.currentText + " pressed");
-                        if (key.name1.equals("Shift")) {
-                            shift = true;
+                        //Log.d("[HardKeyboard]", key.currentText + " pressed");
+
+                        if (key.identifier == ScanCoder.Key.K_CAPS ||
+                                key.identifier == ScanCoder.Key.K_LSHIFT ||
+                                key.identifier == ScanCoder.Key.K_RSHIFT){
+                            shift = !shift;
                             for (HardKey key2 : keys) key2.updateKey();
                         }
 
@@ -68,25 +76,20 @@ public class HardKeyboardActivity extends Activity {
 
                     } else if (event.getAction() == MotionEvent.ACTION_UP) {
                         // Key released
-                        Log.d("[HardKeyboard]", key.name1 + " released");
-                        if (key.name1.equals("Shift")) {
-                            shift = false;
+                        //Log.d("[HardKeyboard]", key.lowername + " released");
+
+                        if (key.identifier == ScanCoder.Key.K_LSHIFT ||
+                                key.identifier == ScanCoder.Key.K_RSHIFT) {
+                            shift = !shift;
                             for (HardKey key2 : keys) key2.updateKey();
                         }
 
                         keyboardWriter.setKey(key.identifier, false);
-
                     }
                     return false;
                 }
             });
-            key.setText(key.name1);
-            key.setPadding(0, 0, 0, 0);
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, key.width);
-            params.width = key.width * keyWidth;
-            params.height = keyWidth;
-            key.setLayoutParams(params);
+
             keyboardGrid.addView(key);
         }
 
@@ -101,130 +104,125 @@ public class HardKeyboardActivity extends Activity {
 
     private void generateKeys() {
         HardKey[] init = {
-                // 0 as placeholder identifiers
-                new HardKey("Esc",  1, ScanCoder.Key.K_ESC),
-                new HardKey("F1",   1, ScanCoder.Key.K_F1),
-                new HardKey("F2",   1, ScanCoder.Key.K_F2),
-                new HardKey("F3",   1, ScanCoder.Key.K_F3),
-                new HardKey("F4",   1, ScanCoder.Key.K_F4),
-                new HardKey("F5",   1, ScanCoder.Key.K_F5),
-                new HardKey("F6",   1, ScanCoder.Key.K_F6),
-                new HardKey("F7",   1, ScanCoder.Key.K_F7),
-                new HardKey("F8",   1, ScanCoder.Key.K_F8),
-                new HardKey("F9",   1, ScanCoder.Key.K_F9),
-                new HardKey("F10",  1, ScanCoder.Key.K_F10),
-                new HardKey("F11",  1, ScanCoder.Key.K_F11),
-                new HardKey("F12",  1, ScanCoder.Key.K_F12),
-                new HardKey("Tmp",  1, ScanCoder.Key.K_ESC),
-                new HardKey("Tmp",  1, ScanCoder.Key.K_ESC),
-                new HardKey("Del",  1, ScanCoder.Key.K_DEL),
+                new HardKey(ScanCoder.Key.K_ESC,        "Esc",  1),
+                new HardKey(ScanCoder.Key.K_F1,         "F1",   1),
+                new HardKey(ScanCoder.Key.K_F2,         "F2",   1),
+                new HardKey(ScanCoder.Key.K_F3,         "F3",   1),
+                new HardKey(ScanCoder.Key.K_F4,         "F4",   1),
+                new HardKey(ScanCoder.Key.K_F5,         "F5",   1),
+                new HardKey(ScanCoder.Key.K_F6,         "F6",   1),
+                new HardKey(ScanCoder.Key.K_F7,         "F7",   1),
+                new HardKey(ScanCoder.Key.K_F8,         "F8",   1),
+                new HardKey(ScanCoder.Key.K_F9,         "F9",   1),
+                new HardKey(ScanCoder.Key.K_F10,        "F10",  1),
+                new HardKey(ScanCoder.Key.K_F11,        "F11",  1),
+                new HardKey(ScanCoder.Key.K_F12,        "F12",  1),
+                new HardKey(ScanCoder.Key.K_ESC,        "Tmp",  1),
+                new HardKey(ScanCoder.Key.K_ESC,        "Tmp",  1),
+                new HardKey(ScanCoder.Key.K_DEL,        "Del",  1),
 
-                new HardKey("`", "~", 1, ScanCoder.Key.K_TILDE),
-                new HardKey("1", "!", 1, ScanCoder.Key.K_1),
-                new HardKey("2", "@", 1, ScanCoder.Key.K_2),
-                new HardKey("3", "#", 1, ScanCoder.Key.K_3),
-                new HardKey("4", "$", 1, ScanCoder.Key.K_4),
-                new HardKey("5", "%", 1, ScanCoder.Key.K_5),
-                new HardKey("6", "^", 1, ScanCoder.Key.K_6),
-                new HardKey("7", "&", 1, ScanCoder.Key.K_7),
-                new HardKey("8", "*", 1, ScanCoder.Key.K_8),
-                new HardKey("9", "(", 1, ScanCoder.Key.K_9),
-                new HardKey("0", ")", 1, ScanCoder.Key.K_0),
-                new HardKey("-", "_", 1, ScanCoder.Key.K_DASH),
-                new HardKey("=", "+", 1, ScanCoder.Key.K_EQ_PLUS),
-                new HardKey("Backspace", 2, ScanCoder.Key.K_BACKSP),
-                new HardKey("Home", 1,   ScanCoder.Key.K_HOME),
+                new HardKey(ScanCoder.Key.K_TILDE,      "`", "~", 1),
+                new HardKey(ScanCoder.Key.K_1,          "1", "!", 1),
+                new HardKey(ScanCoder.Key.K_2,          "2", "@", 1),
+                new HardKey(ScanCoder.Key.K_3,          "3", "#", 1),
+                new HardKey(ScanCoder.Key.K_4,          "4", "$", 1),
+                new HardKey(ScanCoder.Key.K_5,          "5", "%", 1),
+                new HardKey(ScanCoder.Key.K_6,          "6", "^", 1),
+                new HardKey(ScanCoder.Key.K_7,          "7", "&", 1),
+                new HardKey(ScanCoder.Key.K_8,          "8", "*", 1),
+                new HardKey(ScanCoder.Key.K_9,          "9", "(", 1),
+                new HardKey(ScanCoder.Key.K_0,          "0", ")", 1),
+                new HardKey(ScanCoder.Key.K_DASH,       "-", "_", 1),
+                new HardKey(ScanCoder.Key.K_EQ_PLUS,    "=", "+", 1),
+                new HardKey(ScanCoder.Key.K_BACKSP,     "Backspace", 2),
+                new HardKey(ScanCoder.Key.K_HOME,       "Home", 1),
 
-                new HardKey("Tab", 2,    ScanCoder.Key.K_TAB),
-                new HardKey("q", "Q", 1, ScanCoder.Key.K_Q),
-                new HardKey("w", "W", 1, ScanCoder.Key.K_W),
-                new HardKey("e", "E", 1, ScanCoder.Key.K_E),
-                new HardKey("r", "R", 1, ScanCoder.Key.K_R),
-                new HardKey("t", "T", 1, ScanCoder.Key.K_T),
-                new HardKey("y", "Y", 1, ScanCoder.Key.K_Y),
-                new HardKey("u", "U", 1, ScanCoder.Key.K_U),
-                new HardKey("i", "I", 1, ScanCoder.Key.K_I),
-                new HardKey("o", "O", 1, ScanCoder.Key.K_O),
-                new HardKey("p", "P", 1, ScanCoder.Key.K_P),
-                new HardKey("[", "{", 1, ScanCoder.Key.K_OPENB),
-                new HardKey("]", ")", 1, ScanCoder.Key.K_CLOSEB),
-                new HardKey("\\", "|", 1, ScanCoder.Key.K_BACK_BAR),
-                new HardKey("End", 1,    ScanCoder.Key.K_END),
+                new HardKey(ScanCoder.Key.K_TAB,        "Tab", 2),
+                new HardKey(ScanCoder.Key.K_Q,          "q", "Q", 1),
+                new HardKey(ScanCoder.Key.K_W,          "w", "W", 1),
+                new HardKey(ScanCoder.Key.K_E,          "e", "E", 1),
+                new HardKey(ScanCoder.Key.K_R,          "r", "R", 1),
+                new HardKey(ScanCoder.Key.K_T,          "t", "T", 1),
+                new HardKey(ScanCoder.Key.K_Y,          "y", "Y", 1),
+                new HardKey(ScanCoder.Key.K_U,          "u", "U", 1),
+                new HardKey(ScanCoder.Key.K_I,          "i", "I", 1),
+                new HardKey(ScanCoder.Key.K_O,          "o", "O", 1),
+                new HardKey(ScanCoder.Key.K_P,          "p", "P", 1),
+                new HardKey(ScanCoder.Key.K_OPENB,      "[", "{", 1),
+                new HardKey(ScanCoder.Key.K_CLOSEB,     "]", ")", 1),
+                new HardKey(ScanCoder.Key.K_BACK_BAR,   "\\", "|", 1),
+                new HardKey(ScanCoder.Key.K_END,        "End", 1),
 
-                new HardKey("Caps", 2,   ScanCoder.Key.K_CAPS),
-                new HardKey("a", "A", 1, ScanCoder.Key.K_A),
-                new HardKey("s", "S", 1, ScanCoder.Key.K_S),
-                new HardKey("d", "D", 1, ScanCoder.Key.K_D),
-                new HardKey("f", "F", 1, ScanCoder.Key.K_F),
-                new HardKey("g", "G", 1, ScanCoder.Key.K_G),
-                new HardKey("h", "H", 1, ScanCoder.Key.K_H),
-                new HardKey("j", "J", 1, ScanCoder.Key.K_J),
-                new HardKey("k", "K", 1, ScanCoder.Key.K_K),
-                new HardKey("l", "L", 1, ScanCoder.Key.K_L),
-                new HardKey(";", ":", 1, ScanCoder.Key.K_COLONS),
-                new HardKey("'", "\"", 1, ScanCoder.Key.K_QUOTES),
-                new HardKey("Enter", 2,  ScanCoder.Key.K_ENTER),
-                new HardKey("Pg Up", 1,  ScanCoder.Key.K_PGUP),
+                new HardKey(ScanCoder.Key.K_CAPS,       "Caps", 2),
+                new HardKey(ScanCoder.Key.K_A,          "a", "A", 1),
+                new HardKey(ScanCoder.Key.K_S,          "s", "S", 1),
+                new HardKey(ScanCoder.Key.K_D,          "d", "D", 1),
+                new HardKey(ScanCoder.Key.K_F,          "f", "F", 1),
+                new HardKey(ScanCoder.Key.K_G,          "g", "G", 1),
+                new HardKey(ScanCoder.Key.K_H,          "h", "H", 1),
+                new HardKey(ScanCoder.Key.K_J,          "j", "J", 1),
+                new HardKey(ScanCoder.Key.K_K,          "k", "K", 1),
+                new HardKey(ScanCoder.Key.K_L,          "l", "L", 1),
+                new HardKey(ScanCoder.Key.K_COLONS,     ";", ":", 1),
+                new HardKey(ScanCoder.Key.K_QUOTES,     "'", "\"", 1),
+                new HardKey(ScanCoder.Key.K_ENTER,      "Enter", 2),
+                new HardKey(ScanCoder.Key.K_PGUP,       "Pg Up", 1),
 
-                new HardKey("Shift", 2, ScanCoder.Key.K_LSHIFT),
-                new HardKey("z", "Z", 1, ScanCoder.Key.K_Z),
-                new HardKey("x", "X", 1, ScanCoder.Key.K_X),
-                new HardKey("c", "C", 1, ScanCoder.Key.K_C),
-                new HardKey("v", "V", 1, ScanCoder.Key.K_V),
-                new HardKey("b", "B", 1, ScanCoder.Key.K_B),
-                new HardKey("n", "N", 1, ScanCoder.Key.K_N),
-                new HardKey("m", "M", 1, ScanCoder.Key.K_M),
-                new HardKey(",", "<", 1, ScanCoder.Key.K_COMMA),
-                new HardKey(".", ">", 1, ScanCoder.Key.K_PERIOD),
-                new HardKey("/", "?", 1, ScanCoder.Key.K_SLASH),
-                new HardKey("Shift", 2, ScanCoder.Key.K_RSHIFT),
-                new HardKey("Up", 1, ScanCoder.Key.K_UP),
-                new HardKey("Pg Dn", 1, ScanCoder.Key.K_PGUP),
+                new HardKey(ScanCoder.Key.K_LSHIFT,     "Shift", 2),
+                new HardKey(ScanCoder.Key.K_Z,          "z", "Z", 1),
+                new HardKey(ScanCoder.Key.K_X,          "x", "X", 1),
+                new HardKey(ScanCoder.Key.K_C,          "c", "C", 1),
+                new HardKey(ScanCoder.Key.K_V,          "v", "V", 1),
+                new HardKey(ScanCoder.Key.K_B,          "b", "B", 1),
+                new HardKey(ScanCoder.Key.K_N,          "n", "N", 1),
+                new HardKey(ScanCoder.Key.K_M,          "m", "M", 1),
+                new HardKey(ScanCoder.Key.K_COMMA,      ",", "<", 1),
+                new HardKey(ScanCoder.Key.K_PERIOD,     ".", ">", 1),
+                new HardKey(ScanCoder.Key.K_SLASH,      "/", "?", 1),
+                new HardKey(ScanCoder.Key.K_RSHIFT,     "Shift", 2),
+                new HardKey(ScanCoder.Key.K_UP,         "Up", 1),
+                new HardKey(ScanCoder.Key.K_PGDN,       "Pg Dn", 1),
 
-                new HardKey("Ctrl", 1,  ScanCoder.Key.K_LCTRL),
-                new HardKey("Win",  1,  ScanCoder.Key.K_LMETA),
-                new HardKey("Alt",  1,  ScanCoder.Key.K_LALT),
-                new HardKey("Space", 7, ScanCoder.Key.K_SPACE),
-                new HardKey("Alt",  1,  ScanCoder.Key.K_RALT),
-                new HardKey("Fn",   1,  ScanCoder.Key.K_ESC),
-                new HardKey("Ctrl", 1,  ScanCoder.Key.K_RCTRL),
-                new HardKey("Left", 1,  ScanCoder.Key.K_LEFT),
-                new HardKey("Down", 1,  ScanCoder.Key.K_DOWN),
-                new HardKey("Right", 1, ScanCoder.Key.K_RIGHT),
+                new HardKey(ScanCoder.Key.K_LCTRL,      "Ctrl", 1),
+                new HardKey(ScanCoder.Key.K_LMETA,      "Win",  1),
+                new HardKey(ScanCoder.Key.K_LALT,       "Alt",  1),
+                new HardKey(ScanCoder.Key.K_SPACE,      "Space", 7),
+                new HardKey(ScanCoder.Key.K_RALT,       "Alt",  1),
+                new HardKey(ScanCoder.Key.K_ESC,        "Fn",   1),
+                new HardKey(ScanCoder.Key.K_RCTRL,      "Ctrl", 1),
+                new HardKey(ScanCoder.Key.K_LEFT,       "Left", 1),
+                new HardKey(ScanCoder.Key.K_DOWN,       "Down", 1),
+                new HardKey(ScanCoder.Key.K_RIGHT,      "Right", 1),
         };
 
         keys = init;
     }
 
     private class HardKey extends Button {
-        private String name1, name2, currentText;
-        private int width;
         private ScanCoder.Key identifier;
+        private String lowername, uppername;
+        private int width;
         private Paint paint;
 
-        public HardKey(String name, int width, ScanCoder.Key identifier) {
-            this(name, name, width, identifier);
+        public HardKey(ScanCoder.Key identifier, String name, int width) {
+            this(identifier, name, name, width);
         }
 
-        public HardKey(String name1, String name2, int width, ScanCoder.Key identifier) {
+        public HardKey(ScanCoder.Key identifier, String lowername, String uppername, int width) {
             super(HardKeyboardActivity.this);
-            this.name1 = name1;
-            this.name2 = name2;
+            this.lowername = lowername;
+            this.uppername = uppername;
             this.width = width;
             this.identifier = identifier;
             paint = new Paint();
-            currentText = name1;
+            updateKey();
         }
 
         public void updateKey() {
             if (shift) {
-                if (currentText.equals(name1)) {
-                    setText(name2);
-                    currentText = name2;
-                }
-            } else if (currentText.equals(name2)) {
-                setText(name1);
-                currentText = name1;
+                setText(uppername);
+            } else {
+                setText(lowername);
             }
         }
 
@@ -250,9 +248,6 @@ public class HardKeyboardActivity extends Activity {
             int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2)) ;
 
             canvas.drawText(getText().toString(), xPos, yPos, paint);
-
         }
-
     }
-
 }
