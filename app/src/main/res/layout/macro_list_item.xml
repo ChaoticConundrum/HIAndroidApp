@@ -10,7 +10,8 @@
         android:id="@+id/macro_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="28dp"
+        android:textSize="24dp"
+        android:paddingLeft="10dp"
         android:textColor="#000000"/>
 
     <LinearLayout
@@ -23,8 +24,8 @@
             android:src="@drawable/edit"
             android:id="@+id/edit_button"
             android:scaleType="fitXY"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:padding="10dp"
             android:background="@null"
             android:gravity="right" />
@@ -33,8 +34,8 @@
             android:src="@drawable/execute"
             android:id="@+id/execute_button"
             android:scaleType="fitXY"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:padding="10dp"
             android:background="@null"
             android:gravity="right" />

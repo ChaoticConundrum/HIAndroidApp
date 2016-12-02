@@ -10,6 +10,10 @@ public class KeyboardWriter {
     private HashSet<ScanCoder.Key> pressed = null;
     private ScanCoder scanCoder = null;
 
+    private boolean recording;
+    private long recordingTime;
+    public Macro recordingMacro;
+
     public KeyboardWriter(){
         pressed = new HashSet<>();
         new AsyncKeyInit(this).execute();
@@ -27,6 +31,12 @@ public class KeyboardWriter {
             pressed.add(code);
         } else {
             pressed.remove(code);
+        }
+
+        if (recording && recordingMacro != null) {
+            recordingMacro.times.add(System.currentTimeMillis() - recordingTime);
+            recordingMacro.keys.add(code.code());
+            recordingMacro.states.add(press);
         }
 
         //Log.d("[KeyboardWriter]", "Pressed: " + pressed.size());
@@ -52,13 +62,14 @@ public class KeyboardWriter {
     }
 
     void startRecordMacro(int number){
-
+        //Log.d("[KeyboardWriter]", "Recording started");
+        recording = true;
+        recordingTime = System.currentTimeMillis();
+        recordingMacro = new Macro("Macro " + number);
     }
-    void stopRecordMacro(int number){
 
-    }
-
-    void playRecordMacro(int number){
-
+    void stopRecordMacro(){
+        //Log.d("[KeyboardWriter]", "Recording ended");
+        recording = false;
     }
 }

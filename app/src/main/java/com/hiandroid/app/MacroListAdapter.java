@@ -15,14 +15,7 @@ import java.util.ArrayList;
 
 public class MacroListAdapter extends ArrayAdapter<Macro> {
 
-    private MacroListFragment.OnListFragmentInteractionListener interactionListener;
     private ArrayList<Macro> macros;
-
-    public MacroListAdapter(Context context, int resource, ArrayList<Macro> macros, MacroListFragment.OnListFragmentInteractionListener interactionListener) {
-        super(context, resource);
-        this.macros = macros;
-        this.interactionListener = interactionListener;
-    }
 
     public MacroListAdapter(Context context, int resource, ArrayList<Macro> macros) {
         super(context, resource);
@@ -59,25 +52,10 @@ public class MacroListAdapter extends ArrayAdapter<Macro> {
             vh = (ViewHolder) view.getTag();
         }
 
-        vh.label.setText(macro.getName());
+        vh.label.setText(macro.name);
         vh.executeButton.setOnClickListener(macro.getExecuteClickListener());
         return view;
     }
-
-    /*
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != interactionListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    interactionListener.onListFragmentInteraction(getItem(position));
-                }
-            }
-        });
-    } */
 
     private static class ViewHolder {
         ImageButton editButton;

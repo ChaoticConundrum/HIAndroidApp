@@ -1,7 +1,9 @@
 package com.hiandroid.app;
 
 import android.app.ListFragment;
-import android.content.Context;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.widget.ArrayAdapter;
@@ -10,15 +12,10 @@ import java.util.ArrayList;
 
 public class MacroListFragment extends ListFragment {
 
-    /*
-     * The commented bits are to implement an interaction listener to link to an activity.
-     * That route would only be necessary if we want to ditch the dedicated edit button
-     * and make the entire list item selectable (which would conflict with the dedicated run button)
-     */
-
-
-    private OnListFragmentInteractionListener interactionListener;
-    private ArrayList<Macro> macros;
+    public ArrayList<Macro> macros;
+    private ArrayAdapter<Macro> adapter;
+    private MacroDatabaseHelper databaseHelper;
+    private SQLiteDatabase database;
 
     public MacroListFragment() {  }
 
@@ -26,56 +23,75 @@ public class MacroListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        macros = new ArrayList();
-        // Sample Population
-        for (int i = 0; i < 100; i++) {
-            macros.add(new Macro("Macro #" + i));
-        }
+        databaseHelper = new MacroDatabaseHelper(getContext());
 
-        ArrayAdapter<Macro> adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, macros);
-        /*ArrayAdapter<Macro> adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, macros, new OnListFragmentInteractionListener() {
-            @Override
-            public void onListFragmentInteraction(Macro item) {
+        loadMacrosFromDB();
 
-            }
-        }); */
-
+        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, macros);
         setListAdapter(adapter);
     }
 
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Macro item);
+    public void addMacro(Macro m) {
+        macros.add(m);
+        adapter.notifyDataSetChanged();
+        saveMacrosToDB();
     }
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+    private void loadMacrosFromDB() {
         macros = new ArrayList();
-        macros.add(new Macro("Test1"));
-        macros.add(new Macro("Test2"));
-        macros.add(new Macro("Test3"));
-        macros.add(new Macro("Test4"));
+        database = databaseHelper.getReadableDatabase();
 
-        View view = inflater.inflate(R.layout.fragment_macro_list, container, false);
-        RecyclerView macroListView = view.findViewById(R.id.list);
-        macroListView.setAdapter();
+        String[] form = {
+                Macro.DatabaseEntry.COLUMN_NAME_NAME,
+                Macro.DatabaseEntry.COLUMN_NAME_TIME,
+                Macro.DatabaseEntry.COLUMN_NAME_KEY,
+                Macro.DatabaseEntry.COLUMN_NAME_STATE,
+        };
+        Cursor c = database.query(Macro.DatabaseEntry.TABLE_NAME, null, null, null, null, null, null);
+        int nameIndex = c.getColumnIndex(Macro.DatabaseEntry.COLUMN_NAME_NAME);
+        int timeIndex = c.getColumnIndex(Macro.DatabaseEntry.COLUMN_NAME_TIME);
+        int keyIndex = c.getColumnIndex(Macro.DatabaseEntry.COLUMN_NAME_KEY);
+        int stateIndex = c.getColumnIndex(Macro.DatabaseEntry.COLUMN_NAME_STATE);
 
-        return view;
+        while (c.moveToNext()) {
+            String name = c.getString(nameIndex);
+
+            String[] timeStrings = c.getString(timeIndex).split(",");
+            ArrayList<Long> times = new ArrayList();
+            for (String a : timeStrings) times.add(Long.parseLong(a));
+
+            String[] keyStrings = c.getString(keyIndex).split(",");
+            ArrayList<Byte> keys = new ArrayList();
+            for (String a : keyStrings) keys.add(Byte.parseByte(a));
+
+            String[] stateStrings = c.getString(stateIndex).split(",");
+            ArrayList<Boolean> states = new ArrayList();
+            for (String a : stateStrings) states.add(Boolean.parseBoolean(a));
+
+            macros.add(new Macro(name, times, keys, states));
+        }
+
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener)
-            interactionListener = (OnListFragmentInteractionListener) context;
-        else
-            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
-    }
+    private void saveMacrosToDB() {
+        database = databaseHelper.getWritableDatabase();
+        databaseHelper.clearDatabase(database);
+        ContentValues values = new ContentValues();
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        interactionListener = null;
+        for (int i = 0; i < macros.size(); i++) {
+            Macro m = macros.get(i);
+
+            String times = m.times.toString().replace("[", "").replace("]", "").replace(", ", ",");
+            String keys =  m.keys.toString().replace("[", "").replace("]", "").replace(", ", ",");
+            String states =  m.states.toString().replace("[", "").replace("]", "").replace(", ", ",");
+
+            values.put(Macro.DatabaseEntry.COLUMN_NAME_NAME, m.name);
+            values.put(Macro.DatabaseEntry.COLUMN_NAME_TIME, times);
+            values.put(Macro.DatabaseEntry.COLUMN_NAME_KEY, keys);
+            values.put(Macro.DatabaseEntry.COLUMN_NAME_STATE, states);
+
+            database.insert(Macro.DatabaseEntry.TABLE_NAME, null, values);
+        }
+
     }
-    */
 }

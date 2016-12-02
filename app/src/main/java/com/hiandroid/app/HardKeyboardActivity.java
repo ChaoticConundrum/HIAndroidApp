@@ -12,19 +12,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class HardKeyboardActivity extends Activity {
 
     private GridLayout keyboardGrid;
+    private MacroListFragment macroFrag;
     private HardKey[] keys;
     private boolean shift;
-    private Typeface textFont;
 
     private KeyboardWriter keyboardWriter = null;
 
-    public HardKeyboardActivity(){
-
-    }
+    public HardKeyboardActivity(){ }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,26 +36,20 @@ public class HardKeyboardActivity extends Activity {
         getWindowManager().getDefaultDisplay().getMetrics(display);
         int keyWidth = (display.widthPixels / 16);
 
-        //textFont = new Typeface();
-
         shift = false;
         generateKeys();
 
         keyboardGrid = (GridLayout) findViewById(R.id.keyboardGrid);
         keyboardGrid.setColumnCount(16);
         keyboardGrid.setRowCount(6);
-        keyboardGrid.setPadding(0,0,0,0);
-        keyboardGrid.setPaddingRelative(0,0,0,0);
 
         for (final HardKey key : keys) {
-            //key.setText(key.lowername);
-            key.setPadding(0, 0, 0, 0);
-
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, key.width);
             params.width = key.width * keyWidth;
             params.height = keyWidth;
             key.setLayoutParams(params);
+            key.setPadding(0, 0, 0, 0);
 
             key.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -92,15 +85,37 @@ public class HardKeyboardActivity extends Activity {
 
             keyboardGrid.addView(key);
         }
+        final Button startButton = (Button) findViewById(R.id.start_button);
+        final Button stopButton = (Button) findViewById(R.id.stop_button);
 
-        RelativeLayout frame = (RelativeLayout) findViewById(R.id.relLayout);
+        stopButton.setEnabled(false);
 
-        RelativeLayout.LayoutParams reparams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        reparams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        //frame.setLayoutParams(reparams);
-        //frame.setLayoutParams(reparams);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopButton.setEnabled(true);
+                startButton.setEnabled(false);
+                keyboardWriter.startRecordMacro(macroFrag.macros.size()+1);
+            }
+        });
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopButton.setEnabled(false);
+                startButton.setEnabled(true);
+                keyboardWriter.stopRecordMacro();
+                if (keyboardWriter.recordingMacro.keys.size() == 0) Toast.makeText(HardKeyboardActivity.this, "Empty Macro Ignored", Toast.LENGTH_SHORT).show();
+                else macroFrag.addMacro(keyboardWriter.recordingMacro);
+            }
+        });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        macroFrag = (MacroListFragment) getFragmentManager().findFragmentById(R.id.macro_list_fragment);
+    }
 
     private void generateKeys() {
         HardKey[] init = {
@@ -228,10 +243,6 @@ public class HardKeyboardActivity extends Activity {
 
         @Override
         public void onDraw(Canvas canvas) {
-            // Will draw the button to look more like a key
-            // Will draw the text to reflect the state of shift
-            //super.onDraw(canvas);
-
             paint.setColor(Color.parseColor("#232323"));
             paint.setStrokeWidth(3);
             paint.setStyle(Paint.Style.STROKE);
