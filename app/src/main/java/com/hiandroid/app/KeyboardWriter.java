@@ -65,7 +65,8 @@ public class KeyboardWriter {
             pressed.remove(key);
         }
 
-        updateScanCoder();
+        ScanCoder.Key[] keys = pressed.toArray(new ScanCoder.Key[0]);
+        scanCoder.sendCodes(keys);
     }
 
     void setAsciiKey(int ascii, boolean press){
