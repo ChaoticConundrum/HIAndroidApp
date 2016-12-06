@@ -3,10 +3,12 @@ package com.hiandroid.app;
 import android.app.ListFragment;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class MacroListFragment extends ListFragment {
 
@@ -30,6 +32,7 @@ public class MacroListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // Open database and load macros
         macroDatabase = new MacroDatabase(new MacroDatabaseHelper(getContext()));
         macros = macroDatabase.loadMacrosFromDB();
 
@@ -49,7 +52,17 @@ public class MacroListFragment extends ListFragment {
         macroDatabase.saveMacrosToDB(macros);
     }
 
-    public Timer getMacroTimer() {
-        return macroTimer;
+    public void scheduleMacro(final Macro macro){
+        Log.d("[MacroListAdapter]", "Schedule " + macro.name);
+        for(int i = 0 ; i < macro.times.size(); ++i){
+            final int j = i;
+            macroTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.d("[MacroListAdapter]", "Key " + macro.keys.get(j) + " is " + macro.states.get(j));
+                    keyboardWriter.setMacroKey(macro.keys.get(j), macro.states.get(j));
+                }
+            }, macro.times.get(i));
+        }
     }
 }

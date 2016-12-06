@@ -38,17 +38,8 @@ public class KeyboardWriter {
             pressed.remove(code);
         }
 
-        if (recording && recordingMacro != null) {
-            // Trick to save macro base time on first keypress
-            if(recordingTime == 0) {
-                recordingTime = System.currentTimeMillis();
-                recordingMacro.times.add(0L);
-            } else {
-                recordingMacro.times.add(System.currentTimeMillis() - recordingTime);
-            }
-            recordingMacro.keys.add(code.code());
-            recordingMacro.states.add(press);
-        }
+        // Add key to a recording macro
+        saveMacroKey(code.code(), press);
 
         updateScanCoder();
     }
@@ -64,6 +55,9 @@ public class KeyboardWriter {
         } else {
             pressed.remove(key);
         }
+
+        // Add key to a recording macro
+        saveMacroKey(code, press);
 
         ScanCoder.Key[] keys = pressed.toArray(new ScanCoder.Key[0]);
         scanCoder.sendCodes(keys);
@@ -92,5 +86,19 @@ public class KeyboardWriter {
     void stopRecordMacro(){
         //Log.d("[KeyboardWriter]", "Recording ended");
         recording = false;
+    }
+
+    void saveMacroKey(Byte code, boolean press){
+        if (recording && recordingMacro != null) {
+            // Trick to save macro base time on first keypress
+            if(recordingTime == 0) {
+                recordingTime = System.currentTimeMillis();
+                recordingMacro.times.add(0L);
+            } else {
+                recordingMacro.times.add(System.currentTimeMillis() - recordingTime);
+            }
+            recordingMacro.keys.add(code);
+            recordingMacro.states.add(press);
+        }
     }
 }

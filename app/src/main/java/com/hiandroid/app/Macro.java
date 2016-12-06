@@ -1,6 +1,5 @@
 package com.hiandroid.app;
 
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
