@@ -16,6 +16,9 @@ public class ExecuteMacroTask extends AsyncTask<Macro, Void, Void> {
         Log.d("[MacroTask]", "Start " + m.name);
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < m.times.size(); i++) {
+            if(isCancelled())
+                return null;
+
             long nextTime = m.times.get(i);
             Log.d("[MacroTask]", "Key " + m.keys.get(i) + " is " + m.states.get(i) + " at time " + nextTime);
             try {
@@ -34,4 +37,9 @@ public class ExecuteMacroTask extends AsyncTask<Macro, Void, Void> {
         return null;
     }
 
+    @Override
+    protected void onCancelled(Void aVoid) {
+        super.onCancelled(aVoid);
+        Log.d("[MacroTask]", "Cancelled");
+    }
 }

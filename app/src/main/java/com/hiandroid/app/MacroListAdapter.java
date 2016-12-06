@@ -3,6 +3,7 @@ package com.hiandroid.app;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +12,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 public class MacroListAdapter extends ArrayAdapter<Macro> {
 
-    private KeyboardWriter keyboardWriter = null;
     private ArrayList<Macro> macros;
+    private KeyboardWriter keyboardWriter = null;
+    private MacroListFragment fragment = null;
 
-    public MacroListAdapter(Context context, int resource, KeyboardWriter keyboardWriter, ArrayList<Macro> macros) {
+    public MacroListAdapter(Context context, int resource, KeyboardWriter keyboardWriter, MacroListFragment macroListFragment, ArrayList<Macro> macros) {
         super(context, resource);
         this.keyboardWriter = keyboardWriter;
+        this.fragment = macroListFragment;
         this.macros = macros;
     }
 
@@ -54,29 +58,55 @@ public class MacroListAdapter extends ArrayAdapter<Macro> {
         }
 
         vh.label.setText(macro.name);
+
         vh.executeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ExecuteMacroTask(keyboardWriter).execute(macro);
+                // execute macro
+                scheduleMacro(macro);
             }
         });
-        vh.editButton.setOnClickListener(new View.OnClickListener() {
+        vh.fastButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // edit function
+                // fast execute macro
+                scheduleMacro(macro.getFast());
+            }
+        });
+        vh.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // delete macro
+                fragment.removeMacro(macro);
             }
         });
 
         return view;
     }
 
+    private void scheduleMacro(final Macro macro){
+        Log.d("[MacroListAdapter]", "Schedule " + macro.name);
+        for(int i = 0 ; i < macro.times.size(); ++i){
+            final int j = i;
+            fragment.getMacroTimer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.d("[MacroListAdapter]", "Key " + macro.keys.get(j) + " is " + macro.states.get(j));
+                    keyboardWriter.setMacroKey(macro.keys.get(j), macro.states.get(j));
+                }
+            }, macro.times.get(i));
+        }
+    }
+
     private static class ViewHolder {
-        ImageButton editButton;
+        ImageButton deleteButton;
+        ImageButton fastButton;
         ImageButton executeButton;
         TextView label;
         View view;
         ViewHolder(View view) {
-            editButton = (ImageButton) view.findViewById(R.id.edit_button);
+            deleteButton = (ImageButton) view.findViewById(R.id.delete_button);
+            fastButton = (ImageButton) view.findViewById(R.id.fast_button);
             executeButton = (ImageButton) view.findViewById(R.id.execute_button);
             label = (TextView) view.findViewById(R.id.macro_label);
             this.view = view;

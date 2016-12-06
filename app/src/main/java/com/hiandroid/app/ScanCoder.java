@@ -189,7 +189,7 @@ public class ScanCoder {
     }
 
     public void sendCodes(Key[] codes){
-        if(codes == null || cmdStream == null)
+        if(codes == null)
             return;
 
         // Just make sure this is only happening on one thread at a time
@@ -255,6 +255,8 @@ public class ScanCoder {
     }
 
     boolean isSuOpen() {
+        if(process == null || cmdStream == null)
+            return true;
         // This is awful, but the only option
         try {
             process.exitValue();
