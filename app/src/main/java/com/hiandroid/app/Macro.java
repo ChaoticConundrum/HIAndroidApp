@@ -25,32 +25,32 @@ public class Macro {
         this.times = times;
         this.keys = keys;
         this.states = states;
-        executeClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                execute();
-            }
-        };
-        editClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: determine the best way to communicate with the UI thread to switch activities
-            }
-        };
+//        executeClickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                execute();
+//            }
+//        };
+//        editClickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // TODO: determine the best way to communicate with the UI thread to switch activities
+//            }
+//        };
     }
 
-    public View.OnClickListener getExecuteClickListener() {
-        return executeClickListener;
-    }
-
-    public View.OnClickListener getEditClickListener() {
-        return editClickListener;
-    }
-
-    public void execute() {
-        //Log.d("[Macro]", name + " was executed");
-        new ExecuteMacroTask().execute(this);
-    }
+//    public View.OnClickListener getExecuteClickListener() {
+//        return executeClickListener;
+//    }
+//
+//    public View.OnClickListener getEditClickListener() {
+//        return editClickListener;
+//    }
+//
+//    public void execute() {
+//        //Log.d("[Macro]", name + " was executed");
+//        new ExecuteMacroTask().execute(this);
+//    }
 
     class DatabaseEntry {
         public static final String TABLE_NAME = "macros";

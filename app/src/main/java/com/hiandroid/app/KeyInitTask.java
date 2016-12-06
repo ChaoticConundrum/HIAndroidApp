@@ -2,11 +2,11 @@ package com.hiandroid.app;
 
 import android.os.AsyncTask;
 
-public class AsyncKeyInit extends AsyncTask<Void, Void, ScanCoder> {
+public class KeyInitTask extends AsyncTask<Void, Void, ScanCoder> {
 
     private KeyboardWriter keyboardWriter = null;
 
-    public AsyncKeyInit(KeyboardWriter writer){
+    public KeyInitTask(KeyboardWriter writer){
         this.keyboardWriter = writer;
     }
 

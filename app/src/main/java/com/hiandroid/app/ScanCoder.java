@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ScanCoder {
 
@@ -131,6 +132,7 @@ public class ScanCoder {
         private final int ascii;
         private final int asciishift;
 
+        private static final Key[] codemap = new Key[256];
         private static final Key[][] asciimap = new Key[128][];
 
         Key(int code){
@@ -153,6 +155,10 @@ public class ScanCoder {
             return scan;
         }
 
+        public static Key codeKey(byte code){
+            return codemap[code];
+        }
+
         // Returns the key codes needed to make the ascii symbol, or null if unknown ascii
         public static Key[] asciiScanCode(int ascii){
             if(ascii < 128) {
@@ -163,8 +169,10 @@ public class ScanCoder {
         }
 
         static {
-            // Map the ascii values to key codes
+            // Map the codes and ascii values to Keys
             for(Key k : Key.values()){
+                codemap[k.scan & 0xFF] = k;
+
                 if(k.ascii != 0 && k.ascii < 128) {
                     asciimap[k.ascii] = new Key[]{k};
                 }
@@ -176,45 +184,83 @@ public class ScanCoder {
     }
 
     public ScanCoder(){
-        try {
-            process = Runtime.getRuntime().exec("su");
-            cmdStream = new DataOutputStream(process.getOutputStream());
-        } catch(IOException e) {
-            Log.e("[ScanCoder]", "Failed to open su shell");
-        }
+        // Open su shell
+        startSu();
     }
 
     public void sendCodes(Key[] codes){
         if(codes == null || cmdStream == null)
             return;
-        try {
-            // Make BIOS report
-            byte bytes[] = new byte[8];
-            int j = 2;
-            for (int i = 0; i < codes.length; ++i){
-                if(codes[i].code() >= Key.K_LCTRL.code() &&
-                   codes[i].code() <= Key.K_RMETA.code())
-                {
-                    // OR in modifiers
-                    bytes[0] |= 1 << (codes[i].code() - Key.K_LCTRL.code());
-                } else if(j >= 8) {
-                    // Break on roll over
-                    break;
-                } else {
-                    // Max 6 normal keys
-                    bytes[j++] = codes[i].code();
-                }
+
+        // Just make sure this is only happening on one thread at a time
+        // Should be fine if that happens, even mashing keys while running a macro
+        synchronized (this) {
+            if (!isSuOpen()) {
+                Log.d("[ScanCoder]", "su shell exited");
+                // Re-open su shell
+                startSu();
             }
-            // Send report
-            String bystr = String.format(
-                    "\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x\\x%02x",
-                    bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-            Log.d("[ScanCoder]", bystr);
-            // Write report
-            cmdStream.writeBytes("echo -n -e '" + bystr + "' > /dev/hidg0\n");
-            cmdStream.flush();
-        } catch(IOException e){
-            Log.e("[ScanCoder]", "Failed to write char device " + e.toString());
+
+            try {
+                // Make BIOS report
+                byte bytes[] = new byte[8];
+                int j = 2;
+                for (int i = 0; i < codes.length; ++i) {
+                    if (codes[i].code() >= Key.K_LCTRL.code() &&
+                            codes[i].code() <= Key.K_RMETA.code()) {
+                        // OR in modifiers
+                        bytes[0] |= 1 << (codes[i].code() - Key.K_LCTRL.code());
+                    } else if (j >= 8) {
+                        // Break on roll over
+                        break;
+                    } else {
+                        // Max 6 normal keys
+                        bytes[j++] = codes[i].code();
+                    }
+                }
+                Log.d("[ScanCoder]", Arrays.toString(bytes));
+                // Send report
+                cmdStream.writeBytes("dd of=/dev/hidg0 bs=8 count=1\n");
+                cmdStream.write(bytes);
+                cmdStream.writeBytes("\n");
+                cmdStream.flush();
+
+//            // Make N-key report
+//            bytes = new byte[30];
+//            j = 0;
+//            for (int i = 0; i < codes.length; ++i){
+//                byte cd = codes[i].code();
+//                bytes[(cd / 8) + 8] |= 1 << (cd % 8);
+//            }
+//            // Send report
+//            cmdStream.writeBytes("dd of=/dev/hidg1 bs=30 count=1\n");
+//            cmdStream.write(bytes);
+//            cmdStream.writeBytes("\n");
+//            cmdStream.flush();
+
+            } catch (IOException e) {
+                Log.e("[ScanCoder]", "Failed to write char device " + e.toString());
+            }
+        }
+    }
+
+    void startSu() {
+        try {
+            process = Runtime.getRuntime().exec("su");
+            cmdStream = new DataOutputStream(process.getOutputStream());
+            Log.d("[ScanCoder]", "su shell opened");
+        } catch(IOException e) {
+            Log.e("[ScanCoder]", "Failed to open su shell");
+        }
+    }
+
+    boolean isSuOpen() {
+        // This is awful, but the only option
+        try {
+            process.exitValue();
+            return false;
+        } catch (IllegalThreadStateException e) {
+            return true;
         }
     }
 }

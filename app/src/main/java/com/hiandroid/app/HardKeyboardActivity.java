@@ -1,6 +1,7 @@
 package com.hiandroid.app;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -30,7 +31,12 @@ public class HardKeyboardActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hardkeyboard);
 
+        // Create the keyboard writer
         keyboardWriter = new KeyboardWriter();
+
+        macroFrag = (MacroListFragment) getFragmentManager().findFragmentById(R.id.macro_list_fragment);
+
+        macroFrag.setKeyboardWriter(keyboardWriter);
 
         DisplayMetrics display = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(display);
@@ -114,7 +120,7 @@ public class HardKeyboardActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        macroFrag = (MacroListFragment) getFragmentManager().findFragmentById(R.id.macro_list_fragment);
+        //macroFrag = (MacroListFragment) getFragmentManager().findFragmentById(R.id.macro_list_fragment);
     }
 
     private void generateKeys() {

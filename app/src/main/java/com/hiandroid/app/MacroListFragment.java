@@ -4,6 +4,7 @@ import android.app.ListFragment;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 
 import android.widget.ArrayAdapter;
@@ -17,7 +18,13 @@ public class MacroListFragment extends ListFragment {
     private MacroDatabaseHelper databaseHelper;
     private SQLiteDatabase database;
 
-    public MacroListFragment() {  }
+    private KeyboardWriter keyboardWriter = null;
+
+    public MacroListFragment() { }
+
+    public void setKeyboardWriter(KeyboardWriter keyboardWriter){
+        this.keyboardWriter = keyboardWriter;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -27,7 +34,7 @@ public class MacroListFragment extends ListFragment {
 
         loadMacrosFromDB();
 
-        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, macros);
+        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, keyboardWriter, macros);
         setListAdapter(adapter);
     }
 

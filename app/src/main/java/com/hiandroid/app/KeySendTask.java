@@ -4,11 +4,11 @@ import android.os.AsyncTask;
 
 import java.util.HashSet;
 
-public class AsyncKeySend extends AsyncTask<ScanCoder.Key[], Void, Void> {
+public class KeySendTask extends AsyncTask<ScanCoder.Key[], Void, Void> {
 
     private ScanCoder scanCoder = null;
 
-    public AsyncKeySend(ScanCoder coder){
+    public KeySendTask(ScanCoder coder){
         this.scanCoder = coder;
     }
 
