@@ -9,11 +9,8 @@ public class Macro {
     public String name;
 
     public ArrayList<Long> times;
-    public ArrayList<Byte> keys;
+    public ArrayList<Integer> keys;
     public ArrayList<Boolean> states;
-
-    private View.OnClickListener executeClickListener;
-    private View.OnClickListener editClickListener;
 
     public Macro(String name) {
         this(name, new ArrayList(), new ArrayList(), new ArrayList());

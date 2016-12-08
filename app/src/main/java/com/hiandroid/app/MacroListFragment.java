@@ -53,13 +53,13 @@ public class MacroListFragment extends ListFragment {
     }
 
     public void scheduleMacro(final Macro macro){
-        Log.d("[MacroListAdapter]", "Schedule " + macro.name);
+        Log.d("[MacroListFragment]", "Schedule " + macro.name);
         for(int i = 0 ; i < macro.times.size(); ++i){
             final int j = i;
             macroTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Log.d("[MacroListAdapter]", "Key " + macro.keys.get(j) + " is " + macro.states.get(j));
+                    Log.d("[MacroListFragment]", "Key " + macro.keys.get(j) + " is " + macro.states.get(j));
                     keyboardWriter.setMacroKey(macro.keys.get(j), macro.states.get(j));
                 }
             }, macro.times.get(i));

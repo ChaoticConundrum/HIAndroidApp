@@ -44,7 +44,7 @@ public class KeyboardWriter {
         updateScanCoder();
     }
 
-    void setMacroKey(Byte code, boolean press){
+    void setMacroKey(Integer code, boolean press){
         if(scanCoder == null)
             return;
 
@@ -63,19 +63,6 @@ public class KeyboardWriter {
         scanCoder.sendCodes(keys);
     }
 
-    void setAsciiKey(int ascii, boolean press){
-        if(scanCoder == null)
-            return;
-
-        if(press) {
-            pressed.addAll(Arrays.asList(ScanCoder.Key.asciiScanCode(ascii)));
-        } else {
-            pressed.removeAll(Arrays.asList(ScanCoder.Key.asciiScanCode(ascii)));
-        }
-
-        updateScanCoder();
-    }
-
     void startRecordMacro(int number){
         //Log.d("[KeyboardWriter]", "Recording started");
         recording = true;
@@ -88,7 +75,7 @@ public class KeyboardWriter {
         recording = false;
     }
 
-    void saveMacroKey(Byte code, boolean press){
+    void saveMacroKey(int code, boolean press){
         if (recording && recordingMacro != null) {
             // Trick to save macro base time on first keypress
             if(recordingTime == 0) {

@@ -38,8 +38,8 @@ public class MacroDatabase {
             for (String a : timeStrings) times.add(Long.parseLong(a));
 
             String[] keyStrings = c.getString(keyIndex).split(",");
-            ArrayList<Byte> keys = new ArrayList();
-            for (String a : keyStrings) keys.add(Byte.parseByte(a));
+            ArrayList<Integer> keys = new ArrayList();
+            for (String a : keyStrings) keys.add(Integer.parseInt(a));
 
             String[] stateStrings = c.getString(stateIndex).split(",");
             ArrayList<Boolean> states = new ArrayList();

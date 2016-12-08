@@ -12,62 +12,61 @@ public class ScanCoder {
     private DataOutputStream cmdStream = null;
 
     public enum Key {
-        //          (scan, ascii, asciishift)
-        K_A         (0x04, 'a', 'A'),
-        K_B         (0x05, 'b', 'B'),
-        K_C         (0x06, 'c', 'C'),
-        K_D         (0x07, 'd', 'D'),
-        K_E         (0x08, 'e', 'E'),
-        K_F         (0x09, 'f', 'F'),
-        K_G         (0x0a, 'g', 'G'),
-        K_H         (0x0b, 'h', 'H'),
-        K_I         (0x0c, 'i', 'I'),
-        K_J         (0x0d, 'j', 'J'),
-        K_K         (0x0e, 'k', 'K'),
-        K_L         (0x0f, 'l', 'L'),
-        K_M         (0x10, 'm', 'M'),
-        K_N         (0x11, 'n', 'N'),
-        K_O         (0x12, 'o', 'O'),
-        K_P         (0x13, 'p', 'P'),
-        K_Q         (0x14, 'q', 'Q'),
-        K_R         (0x15, 'r', 'R'),
-        K_S         (0x16, 's', 'S'),
-        K_T         (0x17, 't', 'T'),
-        K_U         (0x18, 'u', 'U'),
-        K_V         (0x19, 'v', 'V'),
-        K_W         (0x1a, 'w', 'W'),
-        K_X         (0x1b, 'x', 'X'),
-        K_Y         (0x1c, 'y', 'Y'),
-        K_Z         (0x1d, 'z', 'Z'),
+        K_A         (0x04),
+        K_B         (0x05),
+        K_C         (0x06),
+        K_D         (0x07),
+        K_E         (0x08),
+        K_F         (0x09),
+        K_G         (0x0a),
+        K_H         (0x0b),
+        K_I         (0x0c),
+        K_J         (0x0d),
+        K_K         (0x0e),
+        K_L         (0x0f),
+        K_M         (0x10),
+        K_N         (0x11),
+        K_O         (0x12),
+        K_P         (0x13),
+        K_Q         (0x14),
+        K_R         (0x15),
+        K_S         (0x16),
+        K_T         (0x17),
+        K_U         (0x18),
+        K_V         (0x19),
+        K_W         (0x1a),
+        K_X         (0x1b),
+        K_Y         (0x1c),
+        K_Z         (0x1d),
 
-        K_1         (0x1e, '1', '!'),
-        K_2         (0x1f, '2', '@'),
-        K_3         (0x20, '3', '#'),
-        K_4         (0x21, '4', '$'),
-        K_5         (0x22, '5', '%'),
-        K_6         (0x23, '6', '^'),
-        K_7         (0x24, '7', '&'),
-        K_8         (0x25, '8', '*'),
-        K_9         (0x26, '9', '('),
-        K_0         (0x27, '0', ')'),
+        K_1         (0x1e),
+        K_2         (0x1f),
+        K_3         (0x20),
+        K_4         (0x21),
+        K_5         (0x22),
+        K_6         (0x23),
+        K_7         (0x24),
+        K_8         (0x25),
+        K_9         (0x26),
+        K_0         (0x27),
 
-        K_ENTER     (0x28, '\n'),
-        K_ESC       (0x29, 0x1b),
-        K_BACKSP    (0x2a, 0x08),
-        K_TAB       (0x2b, '\t'),
-        K_SPACE     (0x2c, ' '),
+        K_ENTER     (0x28),
+        K_ESC       (0x29),
+        K_BACKSP    (0x2a),
+        K_TAB       (0x2b),
+        K_SPACE     (0x2c),
 
-        K_DASH      (0x2d, '-', '_'),
-        K_EQ_PLUS   (0x2e, '=', '+'),
-        K_OPENB     (0x2f, '[', '{'),
-        K_CLOSEB    (0x30, ']', '}'),
-        K_BACK_BAR  (0x31, '\\', '|'),
-        K_COLONS    (0x33, ';', ':'),
-        K_QUOTES    (0x34, '\'', '"'),
-        K_TILDE     (0x35, '`', '~'),
-        K_COMMA     (0x36, ',', '<'),
-        K_PERIOD    (0x37, '.', '>'),
-        K_SLASH     (0x38, '/', '?'),
+        K_DASH      (0x2d),
+        K_EQ_PLUS   (0x2e),
+        K_OPENB     (0x2f),
+        K_CLOSEB    (0x30),
+        K_BACK_BAR  (0x31),
+        K_COLONS    (0x33),
+        K_QUOTES    (0x34),
+        K_TILDE     (0x35),
+        K_COMMA     (0x36),
+        K_PERIOD    (0x37),
+        K_SLASH     (0x38),
 
         K_CAPS      (0x39),
 
@@ -128,57 +127,26 @@ public class ScanCoder {
         K_RALT      (0xe6),
         K_RMETA     (0xe7);
 
-        private final byte scan;
-        private final int ascii;
-        private final int asciishift;
+        private final int scan;
 
         private static final Key[] codemap = new Key[256];
-        private static final Key[][] asciimap = new Key[128][];
 
         Key(int code){
-            this.scan = (byte)code;
-            this.ascii = 0;
-            this.asciishift = 0;
-        }
-        Key(int code, int ascii){
-            this.scan = (byte)code;
-            this.ascii = ascii;
-            this.asciishift = 0;
-        }
-        Key(int code, int ascii, int asciishift){
-            this.scan = (byte)code;
-            this.ascii = ascii;
-            this.asciishift = asciishift;
+            this.scan = code;
         }
 
-        public byte code(){
+        public int code(){
             return scan;
         }
 
-        public static Key codeKey(byte code){
+        public static Key codeKey(int code){
             return codemap[code];
         }
 
-        // Returns the key codes needed to make the ascii symbol, or null if unknown ascii
-        public static Key[] asciiScanCode(int ascii){
-            if(ascii < 128) {
-                return asciimap[ascii];
-            } else {
-                return null;
-            }
-        }
-
         static {
-            // Map the codes and ascii values to Keys
+            // Map the codes to Keys
             for(Key k : Key.values()){
-                codemap[k.scan & 0xFF] = k;
-
-                if(k.ascii != 0 && k.ascii < 128) {
-                    asciimap[k.ascii] = new Key[]{k};
-                }
-                if(k.asciishift != 0 && k.asciishift < 128) {
-                    asciimap[k.asciishift] = new Key[]{k, K_LSHIFT};
-                }
+                codemap[k.scan] = k;
             }
         }
     }
@@ -200,6 +168,8 @@ public class ScanCoder {
                 // Re-open su shell
                 startSu();
             }
+            if (!isSuOpen())
+                return;
 
             try {
                 // Make BIOS report
@@ -215,7 +185,7 @@ public class ScanCoder {
                         break;
                     } else {
                         // Max 6 normal keys
-                        bytes[j++] = codes[i].code();
+                        bytes[j++] = (byte)codes[i].code();
                     }
                 }
                 Log.d("[ScanCoder]", Arrays.toString(bytes));
