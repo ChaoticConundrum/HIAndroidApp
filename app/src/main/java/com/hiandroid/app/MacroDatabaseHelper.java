@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MacroDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "Macros.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static final String SQL_CREATE_MACROS_TABLE =
             "CREATE TABLE " + Macro.DatabaseEntry.TABLE_NAME + "(" +
-                    Macro.DatabaseEntry.COLUMN_NAME_NAME + " VARCHAR PRIMARY KEY, " +
+                    Macro.DatabaseEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " +
                     Macro.DatabaseEntry.COLUMN_NAME_TIME + " VARCHAR NOT NULL, " +
                     Macro.DatabaseEntry.COLUMN_NAME_KEY + " VARCHAR NOT NULL, " +
                     Macro.DatabaseEntry.COLUMN_NAME_STATE + " VARCHAR NOT NULL)";

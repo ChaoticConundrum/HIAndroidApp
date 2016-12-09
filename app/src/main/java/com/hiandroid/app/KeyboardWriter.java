@@ -67,7 +67,7 @@ public class KeyboardWriter {
         //Log.d("[KeyboardWriter]", "Recording started");
         recording = true;
         recordingTime = 0;
-        recordingMacro = new Macro("Macro " + number);
+        recordingMacro = new Macro(number);
     }
 
     void stopRecordMacro(){
