@@ -71,6 +71,12 @@ public class MacroListAdapter extends ArrayAdapter<Macro> {
                 fragment.scheduleMacro(macro.getFast());
             }
         });
+        vh.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         vh.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +90,7 @@ public class MacroListAdapter extends ArrayAdapter<Macro> {
 
     private static class ViewHolder {
         ImageButton deleteButton;
+        ImageButton editButton;
         ImageButton fastButton;
         ImageButton executeButton;
         TextView label;
@@ -91,6 +98,7 @@ public class MacroListAdapter extends ArrayAdapter<Macro> {
 
         ViewHolder(View view) {
             deleteButton = (ImageButton) view.findViewById(R.id.delete_button);
+            editButton = (ImageButton) view.findViewById(R.id.edit_button);
             fastButton = (ImageButton) view.findViewById(R.id.fast_button);
             executeButton = (ImageButton) view.findViewById(R.id.execute_button);
             label = (TextView) view.findViewById(R.id.macro_label);

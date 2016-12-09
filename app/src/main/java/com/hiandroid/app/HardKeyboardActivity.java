@@ -257,6 +257,7 @@ public class HardKeyboardActivity extends Activity {
             paint.setColor(Color.parseColor("#232323"));
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setTextSize(36);
+            paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
             int xPos = (canvas.getWidth() / 2);
             int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2)) ;

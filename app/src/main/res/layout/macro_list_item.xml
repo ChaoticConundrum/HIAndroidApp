@@ -21,7 +21,7 @@
         android:gravity="right">
 
         <ImageButton
-            android:src="@drawable/edit"
+            android:src="@drawable/delete"
             android:id="@+id/delete_button"
             android:scaleType="fitXY"
             android:layout_width="55dp"
@@ -31,7 +31,17 @@
             android:gravity="right" />
 
         <ImageButton
-            android:src="@drawable/execute"
+            android:src="@drawable/edit"
+            android:id="@+id/edit_button"
+            android:scaleType="fitXY"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:padding="10dp"
+            android:background="@null"
+            android:gravity="right" />
+
+        <ImageButton
+            android:src="@drawable/fast_execute"
             android:id="@+id/fast_button"
             android:scaleType="fitXY"
             android:layout_width="55dp"
