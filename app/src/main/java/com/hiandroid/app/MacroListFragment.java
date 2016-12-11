@@ -33,11 +33,10 @@ public class MacroListFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         // Open database and load macros
-        macroDatabase = (MacroDatabase) getActivity().getIntent().getSerializableExtra(MacroDatabase.serial);
-        if (macroDatabase == null) macroDatabase = new MacroDatabase(new MacroDatabaseHelper(getContext()));
+        macroDatabase = new MacroDatabase(new MacroDatabaseHelper(getContext()));
         macros = macroDatabase.getMacros();
 
-        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, keyboardWriter, this, macros);
+        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, keyboardWriter, this, macroDatabase);
         setListAdapter(adapter);
     }
 
@@ -49,6 +48,12 @@ public class MacroListFragment extends ListFragment {
 
     public void removeMacro(Macro m){
         macros.remove(m);
+
+        for (int a = m.id-1; a < macros.size(); a++) {
+            macros.get(a).id = macros.get(a).id-1;
+            macros.get(a).name = "Macro " + macros.get(a).id;
+        }
+
         adapter.notifyDataSetChanged();
         macroDatabase.saveMacrosToDB(macros);
     }

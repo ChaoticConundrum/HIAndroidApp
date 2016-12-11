@@ -10,8 +10,9 @@
         android:id="@+id/macro_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:gravity="center_vertical"
-        android:minHeight="100dp">
+        android:layout_above="@+id/keyboardGrid" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,17 +32,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <fragment
+            android:id="@+id/macro_list_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            class="com.hiandroid.app.MacroListFragment"
+            android:layout_alignParentStart="true" />
+
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/macro_list_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        class="com.hiandroid.app.MacroListFragment"
-        android:maxHeight="100dp"
-        android:layout_below="@+id/macro_layout"
-        android:layout_above="@+id/keyboardGrid"
-        android:layout_alignParentStart="true" />
 
     <GridLayout
         android:id="@+id/keyboardGrid"

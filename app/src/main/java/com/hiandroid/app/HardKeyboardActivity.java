@@ -17,7 +17,7 @@ public class HardKeyboardActivity extends Activity {
     private GridLayout keyboardGrid;
     private MacroListFragment macroFrag;
     private HardKey[] keys;
-    private boolean shift;
+    private boolean shift, landscape;
 
     private KeyboardWriter keyboardWriter = null;
 
@@ -38,6 +38,7 @@ public class HardKeyboardActivity extends Activity {
         DisplayMetrics display = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(display);
         int keyWidth = (display.widthPixels / 16);
+        landscape = (display.widthPixels > display.heightPixels);
 
         shift = false;
         generateKeys();
@@ -45,6 +46,7 @@ public class HardKeyboardActivity extends Activity {
         keyboardGrid = (GridLayout) findViewById(R.id.keyboardGrid);
         keyboardGrid.setColumnCount(16);
         keyboardGrid.setRowCount(6);
+        keyboardGrid.setPadding(0,0,0,0);
 
         for (final HardKey key : keys) {
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -52,7 +54,7 @@ public class HardKeyboardActivity extends Activity {
             params.width = key.width * keyWidth;
             params.height = keyWidth;
             key.setLayoutParams(params);
-            key.setPadding(0, 0, 0, 0);
+            if (landscape) key.setPadding(0,0,0,0);
 
             key.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -256,7 +258,7 @@ public class HardKeyboardActivity extends Activity {
 
             paint.setColor(Color.parseColor("#232323"));
             paint.setTextAlign(Paint.Align.CENTER);
-            paint.setTextSize(36);
+            paint.setTextSize(landscape ? 36 : 22);
             paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
             int xPos = (canvas.getWidth() / 2);

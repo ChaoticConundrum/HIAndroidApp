@@ -1,6 +1,9 @@
 package com.hiandroid.app;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,15 +17,19 @@ import java.util.ArrayList;
 
 public class MacroListAdapter extends ArrayAdapter<Macro> {
 
+    private MacroDatabase database;
     private ArrayList<Macro> macros;
     private KeyboardWriter keyboardWriter = null;
     private MacroListFragment fragment = null;
+    private Context context;
 
-    public MacroListAdapter(Context context, int resource, KeyboardWriter keyboardWriter, MacroListFragment macroListFragment, ArrayList<Macro> macros) {
+    public MacroListAdapter(Context context, int resource, KeyboardWriter keyboardWriter, MacroListFragment macroListFragment, MacroDatabase database) {
         super(context, resource);
+        this.context = context;
         this.keyboardWriter = keyboardWriter;
         this.fragment = macroListFragment;
-        this.macros = macros;
+        this.database = database;
+        this.macros = database.getMacros();
     }
 
     @Nullable
@@ -74,14 +81,31 @@ public class MacroListAdapter extends ArrayAdapter<Macro> {
         vh.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Open Edit Macro Activity
+                Intent intent = new Intent(context, EditMacroActivity.class);
+                intent.putExtra("MACRO_ID", macro.id);
+                context.startActivity(intent);
             }
         });
         vh.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // delete macro
-                fragment.removeMacro(macro);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setMessage("Are you sure you want to delete " + macro.name + "?");
+                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        fragment.removeMacro(macro);
+                    }
+                });
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         });
 

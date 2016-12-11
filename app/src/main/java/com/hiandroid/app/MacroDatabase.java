@@ -52,6 +52,7 @@ public class MacroDatabase implements Serializable {
     }
 
     public void saveMacrosToDB(ArrayList<Macro> macros) {
+        this.macros = macros;
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
         databaseHelper.clearDatabase(database);
         ContentValues values = new ContentValues();
