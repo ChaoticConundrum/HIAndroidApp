@@ -171,7 +171,7 @@ public class ScanCoder {
             if (!isSuOpen())
                 return;
 
-           // try {
+            try {
                 // Make BIOS report
                 byte bytes[] = new byte[8];
                 int j = 2;
@@ -190,10 +190,10 @@ public class ScanCoder {
                 }
                 Log.d("[ScanCoder]", Arrays.toString(bytes));
                 // Send report
-                //cmdStream.writeBytes("dd of=/dev/hidg0 bs=8 count=1\n");
-                //cmdStream.write(bytes);
-               // cmdStream.writeBytes("\n");
-                //cmdStream.flush();
+                cmdStream.writeBytes("dd of=/dev/hidg0 bs=8 count=1\n");
+                cmdStream.write(bytes);
+                cmdStream.writeBytes("\n");
+                cmdStream.flush();
 
 //            // Make N-key report
 //            bytes = new byte[30];
@@ -208,9 +208,9 @@ public class ScanCoder {
 //            cmdStream.writeBytes("\n");
 //            cmdStream.flush();
 
-            //} catch (IOException e) {
-            //    Log.e("[ScanCoder]", "Failed to write char device " + e.toString());
-            //}
+            } catch (IOException e) {
+                Log.e("[ScanCoder]", "Failed to write char device " + e.toString());
+            }
         }
     }
 
