@@ -119,7 +119,6 @@ public class HardKeyboardActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        //macroFrag = (MacroListFragment) getFragmentManager().findFragmentById(R.id.macro_list_fragment);
     }
 
     private void generateKeys() {

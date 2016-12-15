@@ -6,11 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MacroDatabase implements Serializable {
-
-    public static String serial = "MACRO_DATABASE";
 
     private MacroDatabaseHelper databaseHelper;
     private ArrayList<Macro> macros;

@@ -36,7 +36,7 @@ public class MacroListFragment extends ListFragment {
         macroDatabase = new MacroDatabase(new MacroDatabaseHelper(getContext()));
         macros = macroDatabase.getMacros();
 
-        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, keyboardWriter, this, macroDatabase);
+        adapter = new MacroListAdapter(getContext(), R.layout.macro_list_item, this, macroDatabase);
         setListAdapter(adapter);
     }
 

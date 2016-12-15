@@ -17,18 +17,14 @@ import java.util.ArrayList;
 
 public class MacroListAdapter extends ArrayAdapter<Macro> {
 
-    private MacroDatabase database;
     private ArrayList<Macro> macros;
-    private KeyboardWriter keyboardWriter = null;
     private MacroListFragment fragment = null;
     private Context context;
 
-    public MacroListAdapter(Context context, int resource, KeyboardWriter keyboardWriter, MacroListFragment macroListFragment, MacroDatabase database) {
+    public MacroListAdapter(Context context, int resource, MacroListFragment macroListFragment, MacroDatabase database) {
         super(context, resource);
         this.context = context;
-        this.keyboardWriter = keyboardWriter;
         this.fragment = macroListFragment;
-        this.database = database;
         this.macros = database.getMacros();
     }
 

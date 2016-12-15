@@ -1,6 +1,5 @@
 package com.hiandroid.app;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class KeyboardWriter {
