@@ -10,5 +10,6 @@ For installation on other devices, the kernel source for another device should b
     
     git diff HIANDROID_FORKED HIANDROID_PATCH
 
+This app will also need superuser permissions, so a superuser helper is also required, such as SuperSU.
 The Android app (this repository) has no build or install dependencies, it may just be built in Android Studio and deployed.
 
